@@ -111,10 +111,12 @@ optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 # Print dataset
 for data in wiki_dataset_loader:
+    print(type(data))
+    print(data)
     # Data
-    inputs, outputs = data
+    """inputs, outputs = data
     print(inputs.size())
-    print(outputs.size())
+    print(outputs.size())"""
 # end for
 
 """"# For each epoch
