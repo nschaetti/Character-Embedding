@@ -5,6 +5,9 @@
 # Imports
 import os
 from torch.utils.data import Dataset
+import codecs
+import torch
+import numpy as np
 
 
 # Wikipedia Character prediction
@@ -49,7 +52,31 @@ class WikipediaCharacter(Dataset):
         :param item:
         :return:
         """
-        pass
+        # Path to text
+        path_to_text = self.files[item]
+
+        # Get text
+        text = codecs.open(path_to_text, 'rb', encoding='utf-8').read()
+
+        # Text length
+        text_length = len(text)
+        sample_length = text_length - self.context_size
+
+        # Inputs and output
+        inputs = torch.LongTensor(sample_length, self.context_size)
+        outputs = torch.LongTensor(sample_length)
+
+        # Build tuple with (preceding chars, target char)
+        for i in np.arange(self.context_size, text_length):
+            pos = 0
+            for j in np.arange(i - self.context_size, i):
+                inputs[i-self.context_size, pos] = self.token_to_ix[text[j]]
+                pos += 1
+            # end for
+            outputs[i-self.context_size] = self.token_to_ix[text[i]]
+        # end for
+
+        return inputs, outputs
     # end __getitem__
 
     ############################################
@@ -64,3 +91,5 @@ class WikipediaCharacter(Dataset):
         """
         return os.listdir(self.root)
     # end _load
+
+# end WikipediaCharacter
