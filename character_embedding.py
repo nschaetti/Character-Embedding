@@ -25,6 +25,7 @@
 import argparse
 import torch
 import torch.autograd as autograd
+from torch.autograd import Variable
 import torch.nn as nn
 import torch.optim as optim
 import codecs
@@ -117,24 +118,25 @@ for data in wiki_dataset_loader:
     print(outputs.size())
 # end for
 
-""""# For each epoch
+# For each epoch
 for epoch in range(args.epoch):
     total_loss = torch.Tensor([0])
-    for context, target in grams:
-        # Prepare inputs
-        context_idxs = [token_to_ix[c] for c in context]
-        context_var = autograd.Variable(torch.LongTensor(context_idxs))
+    # Print dataset
+    for data in wiki_dataset_loader:
+        # Data
+        inputs, outputs = data
+
+        # To variable
+        inputs, outputs = Variable(inputs), Variable(outputs)
 
         # Reset gradients
         model.zero_grad()
 
         # Forward pass
-        log_probs = model(context_var)
+        log_probs = model(inputs)
 
         # Compute loss function
-        loss = loss_function(log_probs, autograd.Variable(
-            torch.LongTensor([token_to_ix[target]])
-        ))
+        loss = loss_function(log_probs, outputs)
 
         # Backward pass
         loss.backward()
@@ -154,4 +156,4 @@ print(token_to_ix['b'])
 print(model.embeddings(autograd.Variable(torch.LongTensor([token_to_ix['b']]))))
 
 # Save
-torch.save(model.embeddings, open(args.output, 'wb'))"""
+torch.save(model.embeddings, open(args.output, 'wb'))
