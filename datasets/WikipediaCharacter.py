@@ -63,17 +63,17 @@ class WikipediaCharacter(Dataset):
         sample_length = text_length - self.context_size
 
         # Inputs and output
-        inputs = torch.LongTensor(1, sample_length, self.context_size)
-        outputs = torch.LongTensor(1, sample_length)
+        inputs = torch.LongTensor(sample_length, self.context_size)
+        outputs = torch.LongTensor(sample_length)
 
         # Build tuple with (preceding chars, target char)
         for i in np.arange(self.context_size, text_length):
             pos = 0
             for j in np.arange(i - self.context_size, i):
-                inputs[0, i-self.context_size, pos] = self.token_to_ix[text[j]]
+                inputs[i-self.context_size, pos] = self.token_to_ix[text[j]]
                 pos += 1
             # end for
-            outputs[0, i-self.context_size] = self.token_to_ix[text[i]]
+            outputs[i-self.context_size] = self.token_to_ix[text[i]]
         # end for
         print(inputs.size())
         print(outputs.size())
