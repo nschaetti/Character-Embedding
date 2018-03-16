@@ -44,10 +44,22 @@ class WikipediaCharacter(Dataset):
         :param batch:
         :return:
         """
-        print(len(batch))
-        print(batch[0].size())
-        print(batch[1].size())
-        exit()
+        # Inputs and outputs
+        inputs = torch.LongTensor()
+        outputs = torch.LongTensor()
+
+        # For each batch
+        for i in range(len(batch)):
+            if i == 0:
+                inputs = batch[i][0]
+                outputs = batch[i][1]
+            else:
+                inputs = torch.cat((inputs, batch[i][0]), dim=0)
+                outputs = torch.cat((outputs, batch[i][0]), dim=0)
+            # end if
+        # end for
+
+        return inputs, outputs
     # end collate
 
     ############################################
