@@ -92,7 +92,7 @@ token_to_ix, voc_size = token_to_ix_voc_size(args.dataset)
 wiki_dataset = datasets.WikipediaCharacter(context_size=2, token_to_ix=token_to_ix)
 
 # Dataset loader
-wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.PadCollate(dim=0))
+wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
 
 # Embedding layer
 embedding_layer = nn.Embedding(voc_size, args.dim)

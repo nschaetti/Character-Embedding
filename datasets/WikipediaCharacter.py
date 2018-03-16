@@ -33,6 +33,21 @@ class WikipediaCharacter(Dataset):
     # end __init__
 
     ############################################
+    # PUBLIC
+    ############################################
+
+    # Collate
+    def collate(self, batch):
+        """
+        Collate
+        :param batch:
+        :return:
+        """
+        print(batch.size())
+        exit()
+    # end collate
+
+    ############################################
     # OVERRIDE
     ############################################
 
