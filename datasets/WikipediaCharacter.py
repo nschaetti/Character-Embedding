@@ -33,11 +33,12 @@ class WikipediaCharacter(Dataset):
     # end __init__
 
     ############################################
-    # PUBLIC
+    # STATIC
     ############################################
 
     # Collate
-    def collate(self, batch):
+    @staticmethod
+    def collate(batch):
         """
         Collate
         :param batch:
