@@ -30,7 +30,9 @@ import torch.optim as optim
 import codecs
 import numpy as np
 from modules import LanguageModel
+from torch.utils.data import DataLoader
 import os
+import datasets
 
 
 ####################################################
@@ -77,26 +79,23 @@ parser.add_argument("--epoch", type=int, help="Epoch", default=300)
 parser.add_argument("--output", type=str, help="Embedding output file", default='char_embedding.p')
 args = parser.parse_args()
 
+# Settings
+batch_size = 64
+
 # Init random seed
 torch.manual_seed(1)
 
 # Token to ix and voc size
 token_to_ix, voc_size = token_to_ix_voc_size(args.dataset)
 
+# Wikipedia character dataset
+wiki_dataset = datasets.WikipediaCharacter(context_size=2, token_to_ix=token_to_ix)
+
+# Dataset loader
+wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True)
+
 # Embedding layer
 embedding_layer = nn.Embedding(voc_size, args.dim)
-
-# Grams
-grams = list()
-
-# Build tuple with (preceding chars, target char)
-for i in np.arange(args.context_size, len(text)):
-    context = list()
-    for j in np.arange(i-args.context_size, i):
-        context.append(text[j])
-    # end for
-    grams.append((context, text[i]))
-# end for
 
 # Losses
 losses = []
@@ -110,7 +109,15 @@ model = LanguageModel(voc_size, args.dim, args.context_size)
 # Optimizer
 optimizer = optim.SGD(model.parameters(), lr=0.001)
 
-# For each epoch
+# Print dataset
+for data in wiki_dataset_loader:
+    # Data
+    inputs, outputs = data
+    print(inputs.size())
+    print(outputs.size())
+# end for
+
+""""# For each epoch
 for epoch in range(args.epoch):
     total_loss = torch.Tensor([0])
     for context, target in grams:
@@ -147,4 +154,4 @@ print(token_to_ix['b'])
 print(model.embeddings(autograd.Variable(torch.LongTensor([token_to_ix['b']]))))
 
 # Save
-torch.save(model.embeddings, open(args.output, 'wb'))
+torch.save(model.embeddings, open(args.output, 'wb'))"""
