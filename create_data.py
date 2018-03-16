@@ -84,7 +84,7 @@ while n_created_files < args.n_files:
 
     # For each line
     for line in lines:
-        if line != u"####################################################################################################":
+        if line != u"####################################################################################################" and len(line) > 0:
             # Random filename
             random_filename = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
 
