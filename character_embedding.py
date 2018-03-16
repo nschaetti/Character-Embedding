@@ -92,7 +92,7 @@ token_to_ix, voc_size = token_to_ix_voc_size(args.dataset)
 wiki_dataset = datasets.WikipediaCharacter(context_size=2, token_to_ix=token_to_ix)
 
 # Dataset loader
-wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.PadCollate)
+wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.PadCollate(dim=0))
 
 # Embedding layer
 embedding_layer = nn.Embedding(voc_size, args.dim)
@@ -111,12 +111,10 @@ optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 # Print dataset
 for data in wiki_dataset_loader:
-    print(type(data))
-    print(data)
     # Data
-    """inputs, outputs = data
+    inputs, outputs = data
     print(inputs.size())
-    print(outputs.size())"""
+    print(outputs.size())
 # end for
 
 """"# For each epoch
