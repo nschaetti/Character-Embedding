@@ -75,7 +75,8 @@ class WikipediaCharacter(Dataset):
             # end for
             outputs[i-self.context_size] = self.token_to_ix[text[i]]
         # end for
-
+        print(inputs.size())
+        print(outputs.size())
         return inputs, outputs
     # end __getitem__
 
