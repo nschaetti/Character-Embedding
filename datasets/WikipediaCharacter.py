@@ -55,7 +55,7 @@ class WikipediaCharacter(Dataset):
                 outputs = batch[i][1]
             else:
                 inputs = torch.cat((inputs, batch[i][0]), dim=0)
-                outputs = torch.cat((outputs, batch[i][0]), dim=0)
+                outputs = torch.cat((outputs, batch[i][1]), dim=0)
             # end if
         # end for
 
