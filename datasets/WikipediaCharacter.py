@@ -53,7 +53,7 @@ class WikipediaCharacter(Dataset):
         :return:
         """
         # Path to text
-        path_to_text = self.files[item]
+        path_to_text = os.path.join(self.root, self.files[item])
 
         # Get text
         text = codecs.open(path_to_text, 'rb', encoding='utf-8').read()
