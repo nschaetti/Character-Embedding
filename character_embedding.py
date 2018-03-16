@@ -80,7 +80,7 @@ parser.add_argument("--output", type=str, help="Embedding output file", default=
 args = parser.parse_args()
 
 # Settings
-batch_size = 2
+batch_size = 64
 
 # Init random seed
 torch.manual_seed(1)
@@ -92,7 +92,7 @@ token_to_ix, voc_size = token_to_ix_voc_size(args.dataset)
 wiki_dataset = datasets.WikipediaCharacter(context_size=2, token_to_ix=token_to_ix)
 
 # Dataset loader
-wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True)
+wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.PadCollate)
 
 # Embedding layer
 embedding_layer = nn.Embedding(voc_size, args.dim)
