@@ -44,7 +44,7 @@ class WikipediaCharacter(Dataset):
         :param batch:
         :return:
         """
-        print(batch.size())
+        print(batch)
         exit()
     # end collate
 
