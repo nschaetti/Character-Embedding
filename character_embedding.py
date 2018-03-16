@@ -80,7 +80,7 @@ parser.add_argument("--output", type=str, help="Embedding output file", default=
 args = parser.parse_args()
 
 # Settings
-batch_size = 1
+batch_size = 2
 
 # Init random seed
 torch.manual_seed(1)
