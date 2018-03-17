@@ -143,7 +143,8 @@ class WikipediaCharacter(Dataset):
             # After
             pos = self.context_size
             for j in np.arange(i + 1, i + 1 + self.context_size * self.n_gram, self.n_gram):
-                inputs[sample_pos, pos] = self.token_to_ix[text[j]]
+                current_gram = text[j:j + self.n_gram]
+                inputs[sample_pos, pos] = self.token_to_ix[current_gram]
                 pos += 1
             # end for
 
