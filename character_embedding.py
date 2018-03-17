@@ -47,6 +47,7 @@ parser = argparse.ArgumentParser(description="Character embedding extraction")
 # Argument
 parser.add_argument("--dataset", type=str, help="Input file")
 parser.add_argument("--dim", type=int, help="Embedding dimension")
+parser.add_argument("--n-gram", type=int, help="N-gram model")
 parser.add_argument("--context-size", type=int, help="Content size")
 parser.add_argument("--epoch", type=int, help="Epoch", default=300)
 parser.add_argument("--output", type=str, help="Embedding output file", default='char_embedding.p')
@@ -59,7 +60,7 @@ batch_size = 64
 torch.manual_seed(1)
 
 # Wikipedia character dataset
-wiki_dataset = datasets.WikipediaCharacter(context_size=2)
+wiki_dataset = datasets.WikipediaCharacter(context_size=args.context_size, n_gram=args.n_gram)
 
 # Token to ix and voc size
 _, voc_size = wiki_dataset.token_to_ix_voc_size()
