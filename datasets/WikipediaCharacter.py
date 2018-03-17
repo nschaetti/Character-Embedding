@@ -131,7 +131,7 @@ class WikipediaCharacter(Dataset):
 
         # Build tuple with (preceding chars, target char)
         sample_pos = 0
-        for i in np.arange(start, end+1):
+        for i in np.arange(start, end):
             # Before
             pos = 0
             for j in np.arange(i - self.context_size * self.n_gram, i, self.n_gram):
