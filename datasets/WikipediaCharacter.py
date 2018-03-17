@@ -17,7 +17,7 @@ class WikipediaCharacter(Dataset):
     """
 
     # Constructor
-    def __init__(self, context_size, root='./data', token_to_ix=None):
+    def __init__(self, context_size, root='./data', token_to_ix=None, n_gram=1):
         """
         Constructor
         :param context_size:
@@ -27,6 +27,7 @@ class WikipediaCharacter(Dataset):
         self.root = root
         self.context_size = context_size
         self.token_to_ix = token_to_ix
+        self.n_gram = n_gram
 
         # Load file list
         self.files = self._load()
@@ -49,7 +50,7 @@ class WikipediaCharacter(Dataset):
         for file_name in os.listdir(self.root):
             text_data = codecs.open(os.path.join(self.root, file_name), 'r', encoding='utf-8').read()
             for i in range(len(text_data)):
-                character = text_data[i]
+                character = text_data[i:i+self.n_gram]
                 if character not in token_to_ix:
                     token_to_ix[character] = index
                     index += 1
@@ -86,7 +87,6 @@ class WikipediaCharacter(Dataset):
                 outputs = torch.cat((outputs, batch[i][1]), dim=0)
             # end if
         # end for
-
         return inputs, outputs
     # end collate
 
@@ -118,30 +118,38 @@ class WikipediaCharacter(Dataset):
 
         # Text length
         text_length = len(text)
-        sample_length = text_length - self.context_size * 2
+        sample_length = text_length - self.context_size * self.n_gram * 2 - self.n_gram + 1
 
         # Inputs and output
         inputs = torch.LongTensor(sample_length, self.context_size * 2)
         outputs = torch.LongTensor(sample_length)
 
+        # Start and end
+        start = self.context_size * self.n_gram
+        end = text_length - self.context_size * self.n_gram
+
         # Build tuple with (preceding chars, target char)
-        for i in np.arange(self.context_size, text_length - self.context_size):
+        for i in np.arange(start, end):
             # Before
             pos = 0
-            for j in np.arange(i - self.context_size, i):
-                inputs[i-self.context_size, pos] = self.token_to_ix[text[j]]
+            for j in np.arange(i - self.context_size * self.n_gram, i, self.n_gram):
+                current_gram = text[j:j+self.n_gram]
+                inputs[i-self.context_size, pos] = self.token_to_ix[current_gram]
                 pos += 1
             # end for
 
             # After
             pos = self.context_size
-            for j in np.arange(i + 1, i + 1 + self.context_size):
+            for j in np.arange(i + 1, i + 1 + self.context_size * self.n_gram, self.n_gram):
                 inputs[i-self.context_size, pos] = self.token_to_ix[text[j]]
                 pos += 1
             # end for
 
+            # Current target gram
+            target_gram = text[i:i+self.n_gram]
+
             # Target output
-            outputs[i-self.context_size] = self.token_to_ix[text[i]]
+            outputs[i-self.context_size] = self.token_to_ix[target_gram]
         # end for
 
         return inputs, outputs
