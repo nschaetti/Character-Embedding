@@ -123,8 +123,7 @@ class WikipediaCharacter(Dataset):
         # Inputs and output
         inputs = torch.LongTensor(sample_length, self.context_size * 2)
         outputs = torch.LongTensor(sample_length)
-        print(inputs.size())
-        print(outputs.size())
+
         # Start and end
         start = self.context_size * self.n_gram
         end = start + sample_length
