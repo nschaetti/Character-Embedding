@@ -3,5 +3,4 @@
 #
 
 # Imports
-from PadCollate import PadCollate
 from WikipediaCharacter import WikipediaCharacter
