@@ -149,7 +149,6 @@ class WikipediaCharacter(Dataset):
 
             # Current target gram
             target_gram = text[i:i+self.n_gram]
-            print(u"{} : {}".format(target_gram, self.token_to_ix[target_gram]))
 
             # Target output
             outputs[sample_pos] = self.token_to_ix[target_gram]
