@@ -62,7 +62,7 @@ torch.manual_seed(1)
 wiki_dataset = datasets.WikipediaCharacter(context_size=2)
 
 # Token to ix and voc size
-_, voc_size = wiki_dataset.token_to_ix_voc_size(args.dataset)
+_, voc_size = wiki_dataset.token_to_ix_voc_size()
 
 # Dataset loader
 wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
