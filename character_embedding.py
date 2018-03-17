@@ -37,34 +37,6 @@ import datasets
 
 
 ####################################################
-# Function
-####################################################
-
-
-# Compute token to ix and voc size
-def token_to_ix_voc_size(dataset_path):
-    """
-    Compute token to ix and voc size
-    :param text_data:
-    :return:
-    """
-    token_to_ix = {}
-    index = 0
-    # For each file
-    for file_name in os.listdir(dataset_path):
-        text_data = codecs.open(os.path.join(dataset_path, file_name), 'r', encoding='utf-8').read()
-        for i in range(len(text_data)):
-            character = text_data[i]
-            if character not in token_to_ix:
-                token_to_ix[character] = index
-                index += 1
-            # end if
-        # end for
-    # end for
-    return token_to_ix, index
-# end token_to_ix_voc_size
-
-####################################################
 # Main function
 ####################################################
 
@@ -116,6 +88,9 @@ for data in wiki_dataset_loader:
     inputs, outputs = data
     print(inputs.size())
     print(outputs.size())
+    print(inputs)
+    print(outputs)
+    exit()
 # end for
 
 # For each epoch
