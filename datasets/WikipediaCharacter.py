@@ -129,19 +129,20 @@ class WikipediaCharacter(Dataset):
         end = text_length - self.context_size * self.n_gram
 
         # Build tuple with (preceding chars, target char)
+        sample_pos = 0
         for i in np.arange(start, end):
             # Before
             pos = 0
             for j in np.arange(i - self.context_size * self.n_gram, i, self.n_gram):
                 current_gram = text[j:j+self.n_gram]
-                inputs[i-self.context_size, pos] = self.token_to_ix[current_gram]
+                inputs[sample_pos, pos] = self.token_to_ix[current_gram]
                 pos += 1
             # end for
 
             # After
             pos = self.context_size
             for j in np.arange(i + 1, i + 1 + self.context_size * self.n_gram, self.n_gram):
-                inputs[i-self.context_size, pos] = self.token_to_ix[text[j]]
+                inputs[sample_pos, pos] = self.token_to_ix[text[j]]
                 pos += 1
             # end for
 
@@ -149,7 +150,10 @@ class WikipediaCharacter(Dataset):
             target_gram = text[i:i+self.n_gram]
 
             # Target output
-            outputs[i-self.context_size] = self.token_to_ix[target_gram]
+            outputs[sample_pos] = self.token_to_ix[target_gram]
+
+            # Sample pos
+            sample_pos += 1
         # end for
 
         return inputs, outputs
