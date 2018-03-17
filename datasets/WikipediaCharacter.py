@@ -17,7 +17,7 @@ class WikipediaCharacter(Dataset):
     """
 
     # Constructor
-    def __init__(self, context_size, token_to_ix, root='./data'):
+    def __init__(self, context_size, root='./data', token_to_ix=None):
         """
         Constructor
         :param context_size:
@@ -56,6 +56,7 @@ class WikipediaCharacter(Dataset):
                 # end if
             # end for
         # end for
+        self.token_to_ix = token_to_ix
         return token_to_ix, index
     # end token_to_ix_voc_size
 

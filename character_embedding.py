@@ -86,11 +86,11 @@ batch_size = 64
 # Init random seed
 torch.manual_seed(1)
 
-# Token to ix and voc size
-token_to_ix, voc_size = token_to_ix_voc_size(args.dataset)
-
 # Wikipedia character dataset
-wiki_dataset = datasets.WikipediaCharacter(context_size=2, token_to_ix=token_to_ix)
+wiki_dataset = datasets.WikipediaCharacter(context_size=2)
+
+# Token to ix and voc size
+_, voc_size = wiki_dataset.token_to_ix_voc_size(args.dataset)
 
 # Dataset loader
 wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
