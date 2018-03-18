@@ -117,7 +117,7 @@ class WikipediaWord(Dataset):
         text = codecs.open(path_to_text, 'rb', encoding='utf-8').read()
 
         # Text length
-        text_length =
+        text_length = 0
         sample_length = text_length - self.context_size * self.n_gram * 2 - self.n_gram + 1
 
         # Inputs and output
