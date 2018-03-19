@@ -107,7 +107,9 @@ for epoch in range(args.epoch):
 
         # Add total loss
         total_loss += loss.data
+        print(loss.data[0])
     # end for
+    exit()
 
     # Print
     print(u"Epoch {}, loss {}".format(total_loss[0]))
