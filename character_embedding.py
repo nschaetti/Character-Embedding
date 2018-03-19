@@ -46,7 +46,11 @@ parser.add_argument("--n-gram", type=int, help="N-gram model", default=1)
 parser.add_argument("--context-size", type=int, help="Content size", default=1)
 parser.add_argument("--epoch", type=int, help="Epoch", default=300)
 parser.add_argument("--output", type=str, help="Embedding output file", default='char_embedding.p')
+parser.add_argument("--no-cuda", action='store_true', default=False, help="Enables CUDA training")
 args = parser.parse_args()
+
+# Use CUDA?
+args.cuda = not args.no_cuda and torch.cuda.is_available()
 
 # Settings
 batch_size = 1
@@ -77,6 +81,9 @@ loss_function = nn.NLLLoss()
 
 # Our model
 model = LanguageModel(voc_size, args.dim, args.context_size)
+if args.cuda:
+    model.cuda()
+# end if
 
 # Optimizer
 optimizer = optim.SGD(model.parameters(), lr=0.001)
@@ -91,6 +98,9 @@ for epoch in range(args.epoch):
 
         # To variable
         inputs, outputs = Variable(inputs), Variable(outputs)
+        if args.cuda:
+            inputs, outputs = inputs.cuda(), outputs.cuda()
+        # end if
 
         # Reset gradients
         model.zero_grad()
