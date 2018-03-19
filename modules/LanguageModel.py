@@ -32,6 +32,7 @@ class LanguageModel(nn.Module):
         print(out.size())
         log_probs = F.log_softmax(out, dim=1)
         print(log_probs.size())
+        print(log_probs)
         exit()
         return log_probs
     # end forward
