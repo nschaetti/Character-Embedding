@@ -8,6 +8,7 @@ from torch.utils.data import Dataset
 import codecs
 import torch
 import numpy as np
+from nltk.tokenize import word_tokenize
 
 
 # Wikipedia Word prediction
@@ -28,7 +29,6 @@ class WikipediaWord(Dataset):
         self.context_size = context_size
         self.token_to_ix = token_to_ix
         self.n_gram = n_gram
-        self.tokenizer = tokenizer
 
         # Load file list
         self.files = self._load()
@@ -50,7 +50,7 @@ class WikipediaWord(Dataset):
         # For each file
         for file_name in os.listdir(self.root):
             text_data = codecs.open(os.path.join(self.root, file_name), 'r', encoding='utf-8').read()
-            for token in self.tokenizer(text_data):
+            for token in word_tokenize(text_data):
                 if token not in token_to_ix:
                     token_to_ix[token] = index
                     index += 1
@@ -116,8 +116,11 @@ class WikipediaWord(Dataset):
         # Get text
         text = codecs.open(path_to_text, 'rb', encoding='utf-8').read()
 
+        # Words
+        words = word_tokenize(text)
+
         # Text length
-        text_length = 0
+        text_length = len(words)
         sample_length = text_length - self.context_size * self.n_gram * 2 - self.n_gram + 1
 
         # Inputs and output
@@ -149,7 +152,6 @@ class WikipediaWord(Dataset):
 
             # Current target gram
             target_gram = text[i:i+self.n_gram]
-            print(u"{} : {}".format(target_gram, self.token_to_ix[target_gram]))
 
             # Target output
             outputs[sample_pos] = self.token_to_ix[target_gram]
