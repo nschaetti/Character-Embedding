@@ -45,7 +45,6 @@ import datasets
 parser = argparse.ArgumentParser(description="Character embedding extraction")
 
 # Argument
-parser.add_argument("--dataset", type=str, help="Input file")
 parser.add_argument("--dim", type=int, help="Embedding dimension")
 parser.add_argument("--n-gram", type=int, help="N-gram model", default=1)
 parser.add_argument("--context-size", type=int, help="Content size", default=1)
