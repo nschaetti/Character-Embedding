@@ -21,6 +21,7 @@ class LanguageModel(nn.Module):
     # Forward
     def forward(self, inputs):
         embeds = self.embeddings(inputs).view((1, -1))
+        print(embeds.size())
         out = F.relu(self.linear1(embeds))
         out = self.linear2(out)
         log_probs = F.log_softmax(out, dim=1)
