@@ -85,7 +85,7 @@ optimizer = optim.SGD(model.parameters(), lr=0.001)
 for epoch in range(args.epoch):
     total_loss = torch.Tensor([0])
     # Print dataset
-    for data in wiki_dataset_loader:
+    for index, data in enumerate(wiki_dataset_loader):
         # Data
         inputs, outputs = data
 
@@ -107,7 +107,11 @@ for epoch in range(args.epoch):
 
         # Add total loss
         total_loss += loss.data
-        print(loss.data[0])
+
+        # Print if first
+        if epoch == 0 and index == 0:
+            print(u"Starting loss {}".format(loss.data[0]))
+        # end if
     # end for
     exit()
 
