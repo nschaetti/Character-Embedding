@@ -27,6 +27,7 @@ class LanguageModel(nn.Module):
         embeds = embeds.view((batch_size, -1))
         print(embeds.size())
         out = F.relu(self.linear1(embeds))
+        print(out.size())
         out = self.linear2(out)
         print(out.size())
         log_probs = F.log_softmax(out, dim=1)
