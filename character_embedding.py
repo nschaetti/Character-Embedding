@@ -71,6 +71,9 @@ wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=Tr
 # Embedding layer
 embedding_layer = nn.Embedding(voc_size, args.dim)
 
+# Counter list
+counter_list = list()
+
 # Losses
 losses = []
 
@@ -82,17 +85,6 @@ model = LanguageModel(voc_size, args.dim, args.context_size)
 
 # Optimizer
 optimizer = optim.SGD(model.parameters(), lr=0.001)
-
-# Print dataset
-for data in wiki_dataset_loader:
-    # Data
-    inputs, outputs = data
-    print(inputs.size())
-    print(outputs.size())
-    print(inputs)
-    print(outputs)
-    exit()
-# end for
 
 # For each epoch
 for epoch in range(args.epoch):
@@ -121,15 +113,10 @@ for epoch in range(args.epoch):
         # Add total loss
         total_loss += loss.data
     # end for
-    losses.append(total_loss)
-    print(total_loss[0])
+
+    # Print
+    print(u"Epoch {}, loss {}".format(total_loss[0]))
 # end for
 
-print(token_to_ix['a'])
-print(model.embeddings(autograd.Variable(torch.LongTensor([token_to_ix['a']]))))
-
-print(token_to_ix['b'])
-print(model.embeddings(autograd.Variable(torch.LongTensor([token_to_ix['b']]))))
-
 # Save
-torch.save(model.embeddings, open(args.output, 'wb'))
+torch.save(model.embeddings.weight, open(args.output, 'wb'))
