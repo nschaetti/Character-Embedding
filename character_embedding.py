@@ -24,15 +24,11 @@
 
 import argparse
 import torch
-import torch.autograd as autograd
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.optim as optim
-import codecs
-import numpy as np
 from modules import LanguageModel
 from torch.utils.data import DataLoader
-import os
 import datasets
 
 
