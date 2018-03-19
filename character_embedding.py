@@ -98,7 +98,7 @@ for epoch in range(args.epoch):
     for index, data in enumerate(wiki_dataset_loader):
         # Data
         inputs, outputs = data
-
+        print(inputs.size())
         # To variable
         inputs, outputs = Variable(inputs), Variable(outputs)
         if args.cuda:
