@@ -14,16 +14,17 @@ class LanguageModel(nn.Module):
     def __init__(self, vocab_size, embedding_dim, context_size):
         super(LanguageModel, self).__init__()
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
-        self.linear1 = nn.Linear(context_size * embedding_dim, 128)
+        self.linear1 = nn.Linear(context_size * 2 * embedding_dim, 128)
         self.linear2 = nn.Linear(128, vocab_size)
     # end __init__
 
     # Forward
     def forward(self, inputs):
+        batch_size = inputs.size(0)
         print(inputs.size())
         embeds = self.embeddings(inputs)
         print(embeds.size())
-        embeds = embeds.view((1, -1))
+        embeds = embeds.view((batch_size, 1, -1))
         print(embeds.size())
         out = F.relu(self.linear1(embeds))
         out = self.linear2(out)
