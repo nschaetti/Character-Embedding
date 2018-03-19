@@ -47,13 +47,11 @@ parser.add_argument("--context-size", type=int, help="Content size", default=1)
 parser.add_argument("--epoch", type=int, help="Epoch", default=300)
 parser.add_argument("--output", type=str, help="Embedding output file", default='char_embedding.p')
 parser.add_argument("--no-cuda", action='store_true', default=False, help="Enables CUDA training")
+parser.add_argument("--batch-size", type=int, help="Batch size", default=10)
 args = parser.parse_args()
 
 # Use CUDA?
 args.cuda = not args.no_cuda and torch.cuda.is_available()
-
-# Settings
-batch_size = 1
 
 # Init random seed
 torch.manual_seed(1)
@@ -65,7 +63,7 @@ wiki_dataset = datasets.WikipediaCharacter(context_size=args.context_size, n_gra
 _, voc_size = wiki_dataset.token_to_ix_voc_size()
 
 # Dataset loader
-wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
+wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
 
 # Embedding layer
 embedding_layer = nn.Embedding(voc_size, args.dim)
