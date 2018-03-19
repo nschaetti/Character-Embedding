@@ -30,6 +30,7 @@ import torch.optim as optim
 from modules import LanguageModel
 from torch.utils.data import DataLoader
 import datasets
+import numpy as np
 
 
 ####################################################
@@ -48,6 +49,7 @@ parser.add_argument("--epoch", type=int, help="Epoch", default=300)
 parser.add_argument("--output", type=str, help="Embedding output file", default='char_embedding.p')
 parser.add_argument("--no-cuda", action='store_true', default=False, help="Enables CUDA training")
 parser.add_argument("--batch-size", type=int, help="Batch size", default=10)
+parser.add_argument("--max-sample-size", type=int, help="Maximum sample size", default=40000)
 args = parser.parse_args()
 
 # Use CUDA?
@@ -88,43 +90,53 @@ optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 # For each epoch
 for epoch in range(args.epoch):
-    total_loss = torch.Tensor([0])
+
+    # Total loss
     if args.cuda:
         total_loss = torch.cuda.FloatTensor([0])
     else:
         total_loss = torch.FloatTensor([0])
     # end if
+
     # Print dataset
     for index, data in enumerate(wiki_dataset_loader):
         # Data
-        inputs, outputs = data
-        print(inputs.size())
-        # To variable
-        inputs, outputs = Variable(inputs), Variable(outputs)
-        if args.cuda:
-            inputs, outputs = inputs.cuda(), outputs.cuda()
-        # end if
+        sample_inputs, sample_outputs = data
 
-        # Reset gradients
-        model.zero_grad()
+        # Sample size
+        sample_size = sample_inputs.size(0)
 
-        # Forward pass
-        log_probs = model(inputs)
+        # For each samples
+        for i in np.arange(0, sample_size, args.max_sample_size):
+            # Sample
+            inputs, outputs = sample_inputs[i:i+args.max_sample_size], sample_outputs[i:i+args.max_sample_size]
 
-        # Compute loss function
-        loss = loss_function(log_probs, outputs)
+            # To variable
+            inputs, outputs = Variable(inputs), Variable(outputs)
+            if args.cuda:
+                inputs, outputs = inputs.cuda(), outputs.cuda()
+            # end if
 
-        # Backward pass
-        loss.backward()
-        optimizer.step()
+            # Reset gradients
+            model.zero_grad()
 
-        # Add total loss
-        total_loss += loss.data
+            # Forward pass
+            log_probs = model(inputs)
 
-        # Print if first
-        if epoch == 0 and index == 0:
-            print(u"Starting loss {}".format(loss.data[0]))
-        # end if
+            # Compute loss function
+            loss = loss_function(log_probs, outputs)
+
+            # Backward pass
+            loss.backward()
+            optimizer.step()
+
+            # Add total loss
+            total_loss += loss.data
+
+            # Print if first
+            if epoch == 0 and index == 0 and i == 0:
+                print(u"Starting loss {}".format(loss.data[0]))
+            # end if
     # end for
 
     # Print
