@@ -90,10 +90,10 @@ optimizer = optim.SGD(model.parameters(), lr=0.001)
 for epoch in range(args.epoch):
     total_loss = torch.Tensor([0])
     if args.cuda:
-        print(u"cuda")
-        total_loss.cuda()
+        total_loss = torch.cuda.FloatTensor([0])
+    else:
+        total_loss = torch.FloatTensor([0])
     # end if
-    print(type(total_loss))
     # Print dataset
     for index, data in enumerate(wiki_dataset_loader):
         # Data
