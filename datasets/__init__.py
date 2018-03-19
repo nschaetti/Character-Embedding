@@ -4,3 +4,4 @@
 
 # Imports
 from WikipediaCharacter import WikipediaCharacter
+from WikipediaWord import WikipediaWord
