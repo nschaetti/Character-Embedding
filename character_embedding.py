@@ -113,7 +113,6 @@ for epoch in range(args.epoch):
             print(u"Starting loss {}".format(loss.data[0]))
         # end if
     # end for
-    exit()
 
     # Print
     print(u"Epoch {}, loss {}".format(total_loss[0]))
