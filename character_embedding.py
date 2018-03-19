@@ -90,6 +90,7 @@ optimizer = optim.SGD(model.parameters(), lr=0.001)
 for epoch in range(args.epoch):
     total_loss = torch.Tensor([0])
     if args.cuda:
+        print(u"cuda")
         total_loss.cuda()
     # end if
     print(type(total_loss))
