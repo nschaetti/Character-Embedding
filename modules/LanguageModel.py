@@ -20,6 +20,7 @@ class LanguageModel(nn.Module):
 
     # Forward
     def forward(self, inputs):
+        print(inputs.size())
         embeds = self.embeddings(inputs)
         print(embeds.size())
         embeds = embeds.view((1, -1))
