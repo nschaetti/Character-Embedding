@@ -17,7 +17,7 @@ class WikipediaCharacter(Dataset):
     """
 
     # Constructor
-    def __init__(self, context_size, root='./data', token_to_ix=None, n_gram=1):
+    def __init__(self, context_size, root='./data', token_to_ix=None, n_gram=1, uppercase=False):
         """
         Constructor
         :param context_size:
@@ -28,6 +28,7 @@ class WikipediaCharacter(Dataset):
         self.context_size = context_size
         self.token_to_ix = token_to_ix
         self.n_gram = n_gram
+        self.uppercase = uppercase
 
         # Load file list
         self.files = self._load()
@@ -36,6 +37,19 @@ class WikipediaCharacter(Dataset):
     ############################################
     # PUBLIC
     ############################################
+
+    # To uppercase
+    def to_uppercase(self, text):
+        """
+        To uppercase
+        :param text:
+        :return:
+        """
+        if not self.uppercase:
+            return text.lower()
+        # end if
+        return text
+    # ebd to_uppercase
 
     # Compute token to ix and voc size
     def token_to_ix_voc_size(self):
@@ -49,6 +63,7 @@ class WikipediaCharacter(Dataset):
         # For each file
         for file_name in os.listdir(self.root):
             text_data = codecs.open(os.path.join(self.root, file_name), 'r', encoding='utf-8').read()
+            text_data = self.to_uppercase(text_data)
             for i in range(len(text_data)):
                 character = text_data[i:i+self.n_gram]
                 if character not in token_to_ix:
@@ -115,6 +130,7 @@ class WikipediaCharacter(Dataset):
 
         # Get text
         text = codecs.open(path_to_text, 'rb', encoding='utf-8').read()
+        text = self.to_uppercase(text)
 
         # Text length
         text_length = len(text)
