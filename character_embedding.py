@@ -110,7 +110,7 @@ for epoch in range(args.epoch):
         for i in np.arange(0, sample_size, args.max_sample_size):
             # Sample
             inputs, outputs = sample_inputs[i:i+args.max_sample_size], sample_outputs[i:i+args.max_sample_size]
-            print(inputs.size())
+
             # To variable
             inputs, outputs = Variable(inputs), Variable(outputs)
             if args.cuda:
