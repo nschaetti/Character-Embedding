@@ -24,11 +24,14 @@ class LanguageModel(nn.Module):
         print(inputs.size())
         embeds = self.embeddings(inputs)
         print(embeds.size())
-        embeds = embeds.view((batch_size, 1, -1))
+        embeds = embeds.view((batch_size, -1))
         print(embeds.size())
         out = F.relu(self.linear1(embeds))
         out = self.linear2(out)
+        print(out.size())
         log_probs = F.log_softmax(out, dim=1)
+        print(log_probs.size())
+        exit()
         return log_probs
     # end forward
 
