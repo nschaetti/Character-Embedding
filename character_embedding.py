@@ -92,6 +92,7 @@ for epoch in range(args.epoch):
     if args.cuda:
         total_loss.cuda()
     # end if
+    print(type(total_loss))
     # Print dataset
     for index, data in enumerate(wiki_dataset_loader):
         # Data
