@@ -134,14 +134,14 @@ for epoch in range(args.epoch):
             total_loss += loss.data
 
             # Print if first
-            if epoch == 0 and index == 0 and i == 0:
+            """if epoch == 0 and index == 0 and i == 0:
                 print(u"Starting loss {}".format(loss.data[0]))
-            # end if
+            # end if"""
         # end for
 
         # Show advances
         if index % 5000 == 0:
-            print(u"Epoch {}, Sample {}, loss {}".format(epoch, index, total_loss[0]))
+            print(u"Epoch {}, Sample {}, loss {}".format(epoch, index, loss.data[0]))
         # end if
     # end for
 
