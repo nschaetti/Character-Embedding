@@ -70,9 +70,6 @@ wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=args.batch_size, shuff
 # Embedding layer
 embedding_layer = nn.Embedding(voc_size, args.dim)
 
-# Counter list
-counter_list = list()
-
 # Losses
 losses = []
 
@@ -132,11 +129,6 @@ for epoch in range(args.epoch):
 
             # Add total loss
             total_loss += loss.data
-
-            # Print if first
-            """if epoch == 0 and index == 0 and i == 0:
-                print(u"Starting loss {}".format(loss.data[0]))
-            # end if"""
         # end for
 
         # Show advances
