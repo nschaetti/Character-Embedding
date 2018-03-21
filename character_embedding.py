@@ -62,7 +62,7 @@ torch.manual_seed(1)
 wiki_dataset = datasets.WikipediaCharacter(context_size=args.context_size, n_gram=args.n_gram)
 
 # Token to ix and voc size
-_, voc_size = wiki_dataset.token_to_ix_voc_size()
+token_to_ix, voc_size = wiki_dataset.token_to_ix_voc_size()
 
 # Dataset loader
 wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
@@ -132,9 +132,9 @@ for epoch in range(args.epoch):
         # end for
 
         # Show advances
-        if index % 5000 == 0:
+        """if index % 5000 == 0:
             print(u"Epoch {}, Sample {}, loss {}".format(epoch, index, loss.data[0]))
-        # end if
+        # end if"""
     # end for
 
     # Print
@@ -142,4 +142,4 @@ for epoch in range(args.epoch):
 # end for
 
 # Save
-torch.save(model.embeddings.weight, open(args.output, 'wb'))
+torch.save((token_to_ix, model.embeddings.weight), open(args.output, 'wb'))
