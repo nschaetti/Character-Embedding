@@ -58,6 +58,6 @@ embedding.weight = nn.Parameter(weights.data)
 print(token_to_ix.keys())
 
 # Some vectors
-print(embedding(torch.LongTensor([token_to_ix('a')])))
-print(embedding(torch.LongTensor([token_to_ix('b')])))
+print(embedding(torch.LongTensor([token_to_ix['a']])))
+print(embedding(torch.LongTensor([token_to_ix['b']])))
 
