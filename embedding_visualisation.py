@@ -48,7 +48,7 @@ parser.add_argument("--image-size", type=int, help="Image size", default=4000)
 args = parser.parse_args()
 
 # Load
-token_to_ix, weights = torch.load(open(args.input, 'wb'))
+token_to_ix, weights = torch.load(open(args.input, 'rb'))
 
 # Embedding matrix
 embedding = weights.numpy()
