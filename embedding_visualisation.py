@@ -24,18 +24,14 @@
 
 import argparse
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
-import torch.optim as optim
-from modules import LanguageModel
-from torch.utils.data import DataLoader
-import datasets
-import numpy as np
 from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
 
 
 # Settings
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't']
+alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+            'v', 'x', 'y', 'z', '.', ',', ';', ':', '-', '!', '?', '"', '\'', '(', ')']
 
 # Argument parser
 parser = argparse.ArgumentParser(description="Character embedding visualization")
@@ -60,7 +56,20 @@ embedding_vectors = weights.numpy()
 # T-SNE
 tsne_embedding = TSNE(n_components=2).fit_transform(embedding_vectors)
 
-# Some vectors
-print(tsne_embedding.shape)
-print(tsne_embedding)
+# Select only needed vectors
+idxs = [token_to_ix[c] for c in alphabet]
+selected_vectors = tsne_embedding[idxs]
+
+# Sub plt
+fig, ax = plt.subplots()
+ax.scatter(selected_vectors[:, 0], selected_vectors[:, 1])
+
+# Show char
+for c in alphabet:
+    idx = token_to_ix[c]
+    ax.annotate(c, (selected_vectors[idx, 0], selected_vectors[idx, 1]))
+# end for
+
+# Save
+fig.savefig(args.output)
 
