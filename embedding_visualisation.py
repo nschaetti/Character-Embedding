@@ -62,5 +62,5 @@ tsne_embedding = TSNE(n_components=2).fit_transform(embedding_vectors)
 
 # Some vectors
 print(tsne_embedding.shape)
-print(tsne_embedding[token_to_ix['a']])
+print(tsne_embedding)
 
