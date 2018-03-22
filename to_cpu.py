@@ -24,51 +24,19 @@
 
 import argparse
 import torch
-import torch.nn as nn
-from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
 
-
-# Settings
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
-            'v', 'x', 'y', 'z', '.', ',', ';', ':', '-', '!', '?', '"', '\'', '(', ')']
 
 # Argument parser
-parser = argparse.ArgumentParser(description="Character embedding visualization")
+parser = argparse.ArgumentParser(description="To CPU")
 
 # Argument
 parser.add_argument("--input", type=str, help="Embedding input file")
 parser.add_argument("--output", type=str, help="Output image file")
-parser.add_argument("--image-size", type=int, help="Image size", default=4000)
 args = parser.parse_args()
 
 # Load
 token_to_ix, weights = torch.load(open(args.input, 'rb'))
 
-# Embedding layer
-embedding = nn.Embedding(weights.size(0), weights.size(1))
-embedding.weight = nn.Parameter(weights)
-
-# Embedding vectors
-embedding_vectors = weights.numpy()
-
-# T-SNE
-tsne_embedding = TSNE(n_components=2).fit_transform(embedding_vectors)
-
-# Select only needed vectors
-idxs = [token_to_ix[c] for c in alphabet]
-selected_vectors = tsne_embedding[idxs]
-
-# Sub plt
-fig, ax = plt.subplots()
-ax.scatter(selected_vectors[:, 0], selected_vectors[:, 1])
-
-# Show char
-for c in alphabet:
-    idx = token_to_ix[c]
-    ax.annotate(c, (tsne_embedding[idx, 0], tsne_embedding[idx, 1]))
-# end for
-
 # Save
-fig.savefig(args.output)
+torch.save((token_to_ix, weights.data.cpu()), open(args.output, 'wb'))
 
