@@ -50,9 +50,8 @@ args = parser.parse_args()
 # Load
 token_to_ix, weights = torch.load(open(args.input, 'rb'))
 
-# Embedding matrix
-print(type(weights))
-embedding = weights.numpy()
-print(embedding.size())
+# Embedding layer
+print(weights.data)
 
+# Keys
 print(token_to_ix.keys())
