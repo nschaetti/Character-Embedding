@@ -47,6 +47,7 @@ token_to_ix, weights = torch.load(open(args.input, 'rb'))
 
 # Embedding layer
 embedding = nn.Embedding(weights.size(0), weights.size(1))
+print(weights)
 embedding.weight = nn.Parameter(weights)
 
 # Embedding vectors
