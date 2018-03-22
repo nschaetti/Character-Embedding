@@ -31,6 +31,7 @@ from modules import LanguageModel
 from torch.utils.data import DataLoader
 import datasets
 import numpy as np
+from sklearn.manifold import TSNE
 
 
 # Settings
@@ -53,7 +54,13 @@ weights = weights.data.cpu()
 embedding = nn.Embedding(weights.size(0), weights.size(1))
 embedding.weight = nn.Parameter(weights)
 
+# Embedding vectors
+embedding_vectors = weights.numpy()
+
+# T-SNE
+tsne_embedding = TSNE(n_components=2).fit_transform(embedding_vectors)
+
 # Some vectors
-print(embedding(Variable(torch.LongTensor([token_to_ix['a']]))))
-print(weights[token_to_ix['a']])
+print(tsne_embedding.size())
+print(tsne_embedding[token_to_ix['a']])
 
