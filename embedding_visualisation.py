@@ -46,7 +46,6 @@ args = parser.parse_args()
 token_to_ix, weights = torch.load(open(args.input, 'rb'))
 
 # Embedding layer
-weights = weights.data.cpu()
 embedding = nn.Embedding(weights.size(0), weights.size(1))
 embedding.weight = nn.Parameter(weights)
 
