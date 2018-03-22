@@ -33,10 +33,8 @@ import datasets
 import numpy as np
 
 
-####################################################
-# Main function
-####################################################
-
+# Settings
+alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't']
 
 # Argument parser
 parser = argparse.ArgumentParser(description="Character embedding visualization")
@@ -57,8 +55,5 @@ embedding.weight = nn.Parameter(weights)
 
 # Some vectors
 print(embedding(Variable(torch.LongTensor([token_to_ix['a']]))))
-print(embedding(Variable(torch.LongTensor([token_to_ix['b']]))))
-print(embedding(Variable(torch.LongTensor([token_to_ix['c']]))))
-print(embedding(Variable(torch.LongTensor([token_to_ix['.']]))))
-print(embedding(Variable(torch.LongTensor([token_to_ix[',']]))))
+print(weights[token_to_ix['a']])
 
