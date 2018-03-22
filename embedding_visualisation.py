@@ -53,3 +53,5 @@ token_to_ix, weights = torch.load(open(args.input, 'wb'))
 # Embedding matrix
 embedding = weights.numpy()
 print(embedding.size())
+
+print(token_to_ix.keys())
