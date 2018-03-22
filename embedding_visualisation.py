@@ -58,8 +58,9 @@ tsne_embedding = TSNE(n_components=2).fit_transform(embedding_vectors)
 
 # Select only needed vectors
 idxs = [token_to_ix[c] for c in alphabet]
+print(idxs)
 selected_vectors = tsne_embedding[idxs]
-
+print(selected_vectors)
 # Sub plt
 fig, ax = plt.subplots()
 ax.scatter(selected_vectors[:, 0], selected_vectors[:, 1])
