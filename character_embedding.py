@@ -142,4 +142,4 @@ for epoch in range(args.epoch):
 # end for
 
 # Save
-torch.save(model.embeddings.weight, open(args.output, 'wb'))
+torch.save((token_to_ix, model.embeddings.weight), open(args.output, 'wb'))
