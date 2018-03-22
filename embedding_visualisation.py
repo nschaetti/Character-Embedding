@@ -52,14 +52,13 @@ token_to_ix, weights = torch.load(open(args.input, 'rb'))
 
 # Embedding layer
 weights = weights.data.cpu()
-print(type(weights))
 embedding = nn.Embedding(weights.size(0), weights.size(1))
 embedding.weight = nn.Parameter(weights)
 
-# Keys
-print(token_to_ix.keys())
-
 # Some vectors
 print(embedding(Variable(torch.LongTensor([token_to_ix['a']]))))
-print(embedding(torch.LongTensor([token_to_ix['b']])))
+print(embedding(Variable(torch.LongTensor([token_to_ix['b']]))))
+print(embedding(Variable(torch.LongTensor([token_to_ix['c']]))))
+print(embedding(Variable(torch.LongTensor([token_to_ix['.']]))))
+print(embedding(Variable(torch.LongTensor([token_to_ix[',']]))))
 
