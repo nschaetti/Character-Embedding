@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 
 # Settings
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
-            'v', 'x', 'y', 'z', '.', ',', ';', ':', '-', '!', '?', '"', '\'', '(', ')']
+            'v', 'x', 'y', 'z', '.', ',', ';', ':', '-', '!', '?', '"', '\'', '(', ')', ' ']
 
 # Argument parser
 parser = argparse.ArgumentParser(description="Character embedding visualization")
