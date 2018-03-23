@@ -141,7 +141,5 @@ for epoch in range(args.epoch):
     print(u"Epoch {}, loss {}".format(epoch, total_loss[0]))
 # end for
 
-
-
 # Save
 torch.save((token_to_ix, torch.FloatTensor(model.embeddings.weight.data.cpu())), open(args.output, 'wb'))
