@@ -70,7 +70,12 @@ embedding_vectors = weights.numpy()
 tsne_embedding = TSNE(n_components=2).fit_transform(embedding_vectors)
 
 # Select only needed vectors
-idxs = [token_to_ix[c] for c in grams]
+idxs = list()
+for c in grams:
+    if c in token_to_ix.keys():
+        idxs.append(token_to_ix[c])
+    # end if
+# end for
 selected_vectors = tsne_embedding[idxs]
 
 # Sub plt
