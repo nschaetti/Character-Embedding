@@ -84,8 +84,10 @@ ax.scatter(selected_vectors[:, 0], selected_vectors[:, 1])
 
 # Show char
 for c in grams:
-    idx = token_to_ix[c]
-    ax.annotate(c, (tsne_embedding[idx, 0], tsne_embedding[idx, 1]))
+    if c in token_to_ix.keys():
+        idx = token_to_ix[c]
+        ax.annotate(c, (tsne_embedding[idx, 0], tsne_embedding[idx, 1]))
+    # end if
 # end for
 
 # Save
