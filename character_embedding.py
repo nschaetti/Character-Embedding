@@ -31,6 +31,8 @@ from modules import LanguageModel
 from torch.utils.data import DataLoader
 import datasets
 import numpy as np
+from decimal import Decimal
+import echotorch.utils
 
 
 ####################################################
@@ -63,6 +65,7 @@ wiki_dataset = datasets.WikipediaCharacter(context_size=args.context_size, n_gra
 
 # Token to ix and voc size
 token_to_ix, voc_size = wiki_dataset.token_to_ix_voc_size()
+print(u"Vocabulary size {}".format(voc_size))
 
 # Dataset loader
 wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
@@ -86,16 +89,66 @@ if args.cuda:
 optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 # For each epoch
-for epoch in range(args.epoch):
-
+for epoch in np.arange(-1, args.epoch, 1):
     # Total loss
-    if args.cuda:
-        total_loss = torch.cuda.FloatTensor([0])
-    else:
-        total_loss = torch.FloatTensor([0])
+    train_loss = 0.0
+    train_total = 0.0
+    test_loss = 0.0
+    test_total = 0.0
+
+    # Skip pre-epoch
+    if epoch >= 0:
+        # Train
+        wiki_dataset_loader.dataset.set_train(True)
+
+        # Print dataset
+        for index, data in enumerate(wiki_dataset_loader):
+            # Data
+            sample_inputs, sample_outputs = data
+
+            # Sample size
+            sample_size = sample_inputs.size(0)
+
+            # For each samples
+            for i in np.arange(0, sample_size, args.max_sample_size):
+                # Sample
+                inputs, outputs = sample_inputs[i:i+args.max_sample_size], sample_outputs[i:i+args.max_sample_size]
+
+                # To variable
+                inputs, outputs = Variable(inputs), Variable(outputs)
+                if args.cuda:
+                    inputs, outputs = inputs.cuda(), outputs.cuda()
+                # end if
+
+                # Reset gradients
+                model.zero_grad()
+
+                # Forward pass
+                log_probs = model(inputs)
+
+                # Compute loss function
+                loss = loss_function(log_probs, outputs)
+
+                # Backward pass
+                loss.backward()
+                optimizer.step()
+
+                # Add total loss
+                train_loss += loss.data[0]
+                train_total += 1.0
+                if index % 5000 == 0:
+                    print(u"\tSample {}, loss {}".format(index, loss.data[0]))
+                # end if
+            # end for
+        # end for
     # end if
 
+    # Test
+    wiki_dataset_loader.dataset.set_train(False)
+
     # Print dataset
+    p_sum = 0
+    p_total = 0.0
     for index, data in enumerate(wiki_dataset_loader):
         # Data
         sample_inputs, sample_outputs = data
@@ -106,7 +159,7 @@ for epoch in range(args.epoch):
         # For each samples
         for i in np.arange(0, sample_size, args.max_sample_size):
             # Sample
-            inputs, outputs = sample_inputs[i:i+args.max_sample_size], sample_outputs[i:i+args.max_sample_size]
+            inputs, outputs = sample_inputs[i:i + args.max_sample_size], sample_outputs[i:i + args.max_sample_size]
 
             # To variable
             inputs, outputs = Variable(inputs), Variable(outputs)
@@ -123,22 +176,31 @@ for epoch in range(args.epoch):
             # Compute loss function
             loss = loss_function(log_probs, outputs)
 
-            # Backward pass
-            loss.backward()
-            optimizer.step()
+            # Perplexity
+            p_sum += echotorch.utils.cumperplexity(log_probs, outputs, log=True)
+            p_total += outputs.size(0)
 
             # Add total loss
-            total_loss += loss.data
+            test_loss += loss.data[0]
+            test_total += 1.0
         # end for
 
-        # Show advances
-        if index % 5000 == 0:
-            print(u"Epoch {}, Sample {}, loss {}".format(epoch, index, loss.data[0]))
+        # Perplexity
+        if index % 1000 == 0:
+            print(u"\tPerplexity {}".format(np.power(2, -1.0/p_total * p_sum)))
         # end if
     # end for
 
+    # Perplexity
+    perplexity = np.power(2, -1.0 / p_total * p_sum)
+
     # Print
-    print(u"Epoch {}, loss {}".format(epoch, total_loss[0]))
+    if epoch >= 0:
+        print(u"Epoch {}, training loss {}, test loss {}, perplexity {}".format(epoch, train_loss / train_total,
+                                                                                test_loss / test_total, perplexity))
+    else:
+        print(u"Epoch {}, test loss {}, perplexity {}".format(epoch, test_loss / test_total, perplexity))
+    # end if
 # end for
 
 # Save

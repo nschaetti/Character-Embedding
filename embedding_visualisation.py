@@ -27,6 +27,7 @@ import torch
 import torch.nn as nn
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 # Settings
@@ -79,17 +80,20 @@ for c in grams:
 selected_vectors = tsne_embedding[idxs]
 
 # Sub plt
-fig, ax = plt.subplots()
-ax.scatter(selected_vectors[:, 0], selected_vectors[:, 1])
+plt.figure(figsize=(80, 80))
+plt.scatter(selected_vectors[:, 0], selected_vectors[:, 1])
 
 # Show char
 for c in grams:
     if c in token_to_ix.keys():
         idx = token_to_ix[c]
-        ax.annotate(c, (tsne_embedding[idx, 0], tsne_embedding[idx, 1]))
+        plt.annotate(c, (tsne_embedding[idx, 0], tsne_embedding[idx, 1]))
     # end if
 # end for
 
-# Save
-fig.savefig(args.output)
+# Min max
+plt.xlim(np.min(selected_vectors[:, 0]), np.max(selected_vectors[:, 0]))
+plt.ylim(np.min(selected_vectors[:, 1]), np.max(selected_vectors[:, 1]))
 
+# Save
+plt.savefig(args.output)

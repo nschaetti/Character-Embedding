@@ -17,7 +17,7 @@ class WikipediaCharacter(Dataset):
     """
 
     # Constructor
-    def __init__(self, context_size, root='./data', token_to_ix=None, n_gram=1, uppercase=False):
+    def __init__(self, context_size, root='./data', token_to_ix=None, n_gram=1, uppercase=False, test=0.1):
         """
         Constructor
         :param context_size:
@@ -29,14 +29,26 @@ class WikipediaCharacter(Dataset):
         self.token_to_ix = token_to_ix
         self.n_gram = n_gram
         self.uppercase = uppercase
+        self.train = True
+        self.test_prop = test
 
         # Load file list
-        self.files = self._load()
+        self.train_files, self.test_files = self._load()
     # end __init__
 
     ############################################
     # PUBLIC
     ############################################
+
+    # Set train mode
+    def set_train(self, mode):
+        """
+        Set train mode
+        :param mode:
+        :return:
+        """
+        self.train = mode
+    # end set_train
 
     # To uppercase
     def to_uppercase(self, text):
@@ -115,7 +127,11 @@ class WikipediaCharacter(Dataset):
         Length
         :return:
         """
-        return len(self.files)
+        if self.train:
+            return len(self.train_files)
+        else:
+            return len(self.test_files)
+        # end if
     # end __len__
 
     # Get item
@@ -126,7 +142,11 @@ class WikipediaCharacter(Dataset):
         :return:
         """
         # Path to text
-        path_to_text = os.path.join(self.root, self.files[item])
+        if self.train:
+            path_to_text = os.path.join(self.root, self.train_files[item])
+        else:
+            path_to_text = os.path.join(self.root, self.test_files[item])
+        # end if
 
         # Get text
         text = codecs.open(path_to_text, 'rb', encoding='utf-8').read()
@@ -186,7 +206,9 @@ class WikipediaCharacter(Dataset):
         Load file list
         :return:
         """
-        return os.listdir(self.root)
+        files = os.listdir(self.root)
+        sep_index = int(len(files) * (1.0 - self.test_prop))
+        return files[:sep_index], files[sep_index:]
     # end _load
 
 # end WikipediaCharacter
