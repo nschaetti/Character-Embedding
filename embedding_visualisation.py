@@ -30,9 +30,22 @@ import matplotlib.pyplot as plt
 
 
 # Settings
+n_gram = 2
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
             'v', 'x', 'y', 'z', '.', ',', ';', ':', '-', '!', '?', '"', '\'', '(', ')', ' ', '0', '1', '2', '3', '4',
             '5', '6', '7', '8', '9']
+
+# Show char
+if n_gram == 1:
+    grams = alphabet
+elif n_gram == 2:
+    grams = list()
+    for c1 in alphabet:
+        for c2 in alphabet:
+            grams.append(c1 + c2)
+        # end for
+    # end for
+# end if
 
 # Argument parser
 parser = argparse.ArgumentParser(description="Character embedding visualization")
@@ -57,7 +70,7 @@ embedding_vectors = weights.numpy()
 tsne_embedding = TSNE(n_components=2).fit_transform(embedding_vectors)
 
 # Select only needed vectors
-idxs = [token_to_ix[c] for c in alphabet]
+idxs = [token_to_ix[c] for c in grams]
 selected_vectors = tsne_embedding[idxs]
 
 # Sub plt
@@ -65,7 +78,7 @@ fig, ax = plt.subplots()
 ax.scatter(selected_vectors[:, 0], selected_vectors[:, 1])
 
 # Show char
-for c in alphabet:
+for c in grams:
     idx = token_to_ix[c]
     ax.annotate(c, (tsne_embedding[idx, 0], tsne_embedding[idx, 1]))
 # end for
