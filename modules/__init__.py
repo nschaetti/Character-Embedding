@@ -3,4 +3,5 @@
 #
 
 # Imports
+from DeepLanguageModel import DeepLanguageModel
 from LanguageModel import LanguageModel

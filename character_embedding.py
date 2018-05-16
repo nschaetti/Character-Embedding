@@ -27,7 +27,7 @@ import torch
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.optim as optim
-from modules import LanguageModel
+from modules import DeepLanguageModel, LanguageModel
 from torch.utils.data import DataLoader
 import datasets
 import numpy as np
@@ -52,6 +52,8 @@ parser.add_argument("--output", type=str, help="Embedding output file", default=
 parser.add_argument("--no-cuda", action='store_true', default=False, help="Enables CUDA training")
 parser.add_argument("--batch-size", type=int, help="Batch size", default=10)
 parser.add_argument("--max-sample-size", type=int, help="Maximum sample size", default=40000)
+parser.add_argument("--n-linear", type=int, help="Linear size", default=40000)
+parser.add_argument("--deep", action='store_true', help="Use deep model", default=False)
 args = parser.parse_args()
 
 # Use CUDA?
@@ -70,9 +72,6 @@ print(u"Vocabulary size {}".format(voc_size))
 # Dataset loader
 wiki_dataset_loader = DataLoader(wiki_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=datasets.WikipediaCharacter.collate)
 
-# Embedding layer
-embedding_layer = nn.Embedding(voc_size, args.dim)
-
 # Losses
 losses = []
 
@@ -80,16 +79,24 @@ losses = []
 loss_function = nn.NLLLoss()
 
 # Our model
-model = LanguageModel(voc_size, args.dim, args.context_size)
+if args.deep:
+    model = DeepLanguageModel(voc_size, args.dim, args.context_size, out_channel=10, kernel_size=(20, 4), stride=(10, 0))
+else:
+    model = LanguageModel(voc_size, args.dim, args.context_size, args.n_linear)
+# end if
 if args.cuda:
     model.cuda()
 # end if
+best_perp = 2000000000
 
 # Optimizer
 optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 # For each epoch
 for epoch in np.arange(-1, args.epoch, 1):
+    # Log
+    print(u"Epoch {}".format(epoch))
+
     # Total loss
     train_loss = 0.0
     train_total = 0.0
@@ -186,8 +193,8 @@ for epoch in np.arange(-1, args.epoch, 1):
         # end for
 
         # Perplexity
-        if index % 1000 == 0:
-            print(u"\tPerplexity {}".format(np.power(2, -1.0/p_total * p_sum)))
+        if index % 5000 == 0:
+            print(u"\tTest loss {}, perplexity {}".format(test_loss / test_total, np.power(2, -1.0 / p_total * p_sum)))
         # end if
     # end for
 
@@ -201,7 +208,11 @@ for epoch in np.arange(-1, args.epoch, 1):
     else:
         print(u"Epoch {}, test loss {}, perplexity {}".format(epoch, test_loss / test_total, perplexity))
     # end if
-# end for
 
-# Save
-torch.save((token_to_ix, torch.FloatTensor(model.embeddings.weight.data.cpu())), open(args.output, 'wb'))
+    # Save if better
+    if perplexity < best_perp:
+        print(u"Save best model to {}".format(args.output))
+        torch.save((token_to_ix, torch.FloatTensor(model.embeddings.weight.data.cpu())), open(args.output, 'wb'))
+        best_perp = perplexity
+    # end if
+# end for
