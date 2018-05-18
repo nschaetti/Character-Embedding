@@ -32,7 +32,7 @@ from torch.utils.data import DataLoader
 import datasets
 import numpy as np
 from decimal import Decimal
-import echotorch.utils
+import torchlanguage.utils
 
 
 ####################################################
@@ -52,6 +52,7 @@ parser.add_argument("--output", type=str, help="Embedding output file", default=
 parser.add_argument("--no-cuda", action='store_true', default=False, help="Enables CUDA training")
 parser.add_argument("--batch-size", type=int, help="Batch size", default=10)
 parser.add_argument("--max-sample-size", type=int, help="Maximum sample size", default=40000)
+parser.add_argument("--max-test-sample-size", type=int, help="Maximum test sample size", default=40000)
 parser.add_argument("--n-linear", type=int, help="Linear size", default=40000)
 parser.add_argument("--deep", action='store_true', help="Use deep model", default=False)
 args = parser.parse_args()
@@ -102,6 +103,7 @@ for epoch in np.arange(-1, args.epoch, 1):
     train_total = 0.0
     test_loss = 0.0
     test_total = 0.0
+    model.train()
 
     # Skip pre-epoch
     if epoch >= 0:
@@ -143,18 +145,21 @@ for epoch in np.arange(-1, args.epoch, 1):
                 # Add total loss
                 train_loss += loss.data[0]
                 train_total += 1.0
-                if index % 5000 == 0:
-                    print(u"\tSample {}, loss {}".format(index, loss.data[0]))
-                # end if
             # end for
+
+            # Log
+            if index % 1000 == 0:
+                print(u"\tSample {}, loss {}".format(index, train_loss / train_total))
+            # end if
         # end for
     # end if
 
     # Test
     wiki_dataset_loader.dataset.set_train(False)
+    model.eval()
 
     # Print dataset
-    p_sum = 0
+    p_sum = torch.FloatTensor([0.0]) if not args.cuda else torch.cuda.FloatTensor([0.0])
     p_total = 0.0
     for index, data in enumerate(wiki_dataset_loader):
         # Data
@@ -164,18 +169,15 @@ for epoch in np.arange(-1, args.epoch, 1):
         sample_size = sample_inputs.size(0)
 
         # For each samples
-        for i in np.arange(0, sample_size, args.max_sample_size):
+        for i in np.arange(0, sample_size, args.max_test_sample_size):
             # Sample
-            inputs, outputs = sample_inputs[i:i + args.max_sample_size], sample_outputs[i:i + args.max_sample_size]
+            inputs, outputs = sample_inputs[i:i + args.max_test_sample_size], sample_outputs[i:i + args.max_test_sample_size]
 
             # To variable
             inputs, outputs = Variable(inputs), Variable(outputs)
             if args.cuda:
                 inputs, outputs = inputs.cuda(), outputs.cuda()
             # end if
-
-            # Reset gradients
-            model.zero_grad()
 
             # Forward pass
             log_probs = model(inputs)
@@ -184,7 +186,7 @@ for epoch in np.arange(-1, args.epoch, 1):
             loss = loss_function(log_probs, outputs)
 
             # Perplexity
-            p_sum += echotorch.utils.cumperplexity(log_probs, outputs, log=True)
+            p_sum += torchlanguage.utils.cumperplexity(log_probs.data, outputs.data, log=True)
             p_total += outputs.size(0)
 
             # Add total loss
@@ -193,13 +195,13 @@ for epoch in np.arange(-1, args.epoch, 1):
         # end for
 
         # Perplexity
-        if index % 5000 == 0:
-            print(u"\tTest loss {}, perplexity {}".format(test_loss / test_total, np.power(2, -1.0 / p_total * p_sum)))
+        if index % 1000 == 0:
+            print(u"\tTest loss {}, perplexity {}".format(test_loss / test_total, np.power(2, -1.0 / p_total * float(p_sum[0]))))
         # end if
     # end for
 
     # Perplexity
-    perplexity = np.power(2, -1.0 / p_total * p_sum)
+    perplexity = np.power(2, -1.0 / p_total * float(p_sum[0]))
 
     # Print
     if epoch >= 0:
